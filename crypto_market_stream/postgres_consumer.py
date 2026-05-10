@@ -2,7 +2,9 @@ import os
 import json
 from kafka import KafkaConsumer
 import psycopg2
+from dotenv import load_dotenv
 
+load_dotenv()
 
 KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
 METRICS_TOPIC = "crypto_metrics"
@@ -49,13 +51,13 @@ for message in consumer:
         )
         VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, (
-        event["coin"],
-        event["window_start"],
-        event["window_end"],
-        event["avg_price"],
-        event["min_price"],
-        event["max_price"],
-        event["volatility"]
+        event.get("coin"),
+        event.get("window_start"),
+        event.get("window_end"),
+        event.get("avg_price"),
+        event.get("min_price"),
+        event.get("max_price"),
+        event.get("volatility")
     ))
 
     conn.commit()
