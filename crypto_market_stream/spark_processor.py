@@ -1,9 +1,12 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json, window, avg, min, max, stddev, struct, to_json
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
+KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
 RAW_TOPIC = "crypto_prices"
 METRICS_TOPIC = "crypto_metrics"
 CHECKPOINT_LOCATION = "checkpoints/crypto_metrics_kafka"
@@ -52,7 +55,7 @@ final_df = parsed_df.select("data.*")
 
 
 windowed_metrics_df = final_df.groupBy(
-    window(col("timestamp").cast("timestamp"), "10 minutes"),
+    window(col("timestamp").cast("timestamp"), "1 minutes"),
     col("coin")
 ).agg(
     avg("price_usd").alias("avg_price"),
