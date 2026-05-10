@@ -1,0 +1,7 @@
+kafka-python
+pandas
+psycopg2-binary
+python-dotenv
+pyspark
+requests
+apache-airflow
