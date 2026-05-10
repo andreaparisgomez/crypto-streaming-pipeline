@@ -5,6 +5,10 @@ from datetime import datetime
 import time
 from kafka import KafkaProducer
 import json
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # configuration
 
@@ -17,7 +21,7 @@ FETCH_INTERVAL = 60
 # Kafka producer
 
 producer = KafkaProducer(
-    bootstrap_servers='localhost:9092',
+    bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"),
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
