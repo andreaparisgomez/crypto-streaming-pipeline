@@ -441,7 +441,52 @@ Airflow task failures often originate from downstream infrastructure dependencie
 
 ---
 
+## Airflow environment variable propagation debugging
+
+Issue:
+Airflow DAGs failed after replacing hardcoded PostgreSQL credentials with environment variables.
+
+Cause:
+The Airflow Docker containers could not access the PostgreSQL environment variables because:
+- variables existed locally inside `.env`
+- but were not passed into the Docker Compose container environment
+
+Important realisation:
+A local `.env` file does NOT automatically make variables available inside running containers.
+
+Fix:
+Added PostgreSQL variables into the shared Airflow Docker Compose environment:
+
+```yaml
+environment:
+  &airflow-common-env
+  POSTGRES_HOST: ${POSTGRES_HOST}
+  POSTGRES_DB: ${POSTGRES_DB}
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+```
+
+Then restarted the Airflow services.
+
+Additional debugging:
+Initial YAML syntax errors occurred because the Docker Compose anchor:
+
+```yaml
+&airflow-common-env
+```
+
+was accidentally placed incorrectly during editing.
+
+Final outcome:
+- Airflow DAGs successfully accessed PostgreSQL credentials through environment variables
+- hardcoded credentials were removed from DAG scripts
+- repository became safe for public GitHub upload
+
+---
+
 # Final Working Architecture
+
+Fully working hybrid streaming + orchestration pipeline:
 
 ```text
 CoinGecko API
@@ -449,27 +494,76 @@ CoinGecko API
 → Kafka topic: crypto_prices
 → PySpark Structured Streaming
 → Kafka topic: crypto_metrics
-→ Python Kafka consumer
-→ PostgreSQL storage
-→ Airflow orchestration
-→ daily analytical summaries
+→ Python PostgreSQL consumer
+→ PostgreSQL: crypto_metrics table
+→ Apache Airflow ETL DAG
+→ PostgreSQL: daily_crypto_summary table
+→ Apache Airflow monitoring DAG
+→ operational health validation
 ```
+
+Verified through:
+- live PostgreSQL row growth
+- Spark streaming metrics
+- Airflow ETL execution
+- Airflow health-check DAGs
+- behavioural row-growth monitoring
 
 ---
 
-# Technical Concepts Applied
+## Major conceptual understanding achieved
 
-- Kafka brokers, topics and offsets
-- Kafka producers and consumers
+Key concepts learned during the project:
+
+### Streaming and Event Architecture
+- Kafka brokers/topics/partitions
+- producers vs consumers
+- Kafka offsets
+- asynchronous event transport
+- decoupled pipeline architecture
+
+### PySpark Structured Streaming
 - SparkSession configuration
-- Structured Streaming architecture
-- Kafka sources and sinks in Spark
-- Streaming schemas and JSON parsing
-- Time-window aggregations
-- Spark checkpointing
-- Streaming vs static Spark constraints
-- Airflow orchestration
-- Docker volume mounts
-- Infrastructure debugging
-- Schema evolution handling
-- Streaming state management
+- readStream/writeStream
+- schema application
+- parsing and flattening JSON
+- event-time window aggregations
+- streaming checkpoints
+- fault tolerance
+- streaming limitations of SQL window functions
+
+### PostgreSQL Integration
+- relational analytical storage
+- streaming persistence
+- batch aggregation workflows
+- PostgreSQL consumers
+
+### Apache Airflow Orchestration
+- DAG structure
+- task dependencies
+- scheduled ETL pipelines
+- orchestration vs streaming separation
+- Airflow retries and task states
+- Airflow container services
+
+### Monitoring and Observability
+- infrastructure health checks
+- behavioural monitoring
+- row-growth validation
+- stale pipeline detection
+- operational workflow monitoring
+
+### Docker and Infrastructure
+- Docker Compose services
+- container networking
+- environment variable propagation
+- shared container environments
+- YAML debugging
+- service orchestration
+
+### Architectural Understanding
+- separation of streaming and batch layers
+- hybrid real-time + batch systems
+- operational pipeline design
+- modular distributed architectures
+- stateful vs stateless processing
