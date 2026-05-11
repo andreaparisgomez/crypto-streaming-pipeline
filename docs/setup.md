@@ -100,6 +100,35 @@ http://localhost:8080
 
 ---
 
+## Airflow Environment Variables
+
+Airflow services receive PostgreSQL credentials through Docker Compose environment variables defined in:
+
+```text
+airflow/.env
+```
+
+These variables are injected into the Airflow containers through the shared Docker Compose environment configuration.
+
+Example:
+
+```env
+POSTGRES_HOST=host.docker.internal
+POSTGRES_DB=crypto_db
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_postgres_password
+```
+
+The real `.env` files are excluded from Git using `.gitignore`.
+
+Template configuration files are provided through:
+
+```text
+.env.example
+airflow/.env.example
+```
+---
+
 # Running the Streaming Pipeline
 
 Open separate terminal sessions.
