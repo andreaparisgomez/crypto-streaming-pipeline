@@ -159,6 +159,47 @@ In this architecture, Airflow operates on persisted streaming data rather than o
 
 ---
 
+# Monitoring and Health Checks
+
+The project includes operational monitoring workflows implemented with Apache Airflow.
+
+The monitoring layer validates both:
+- infrastructure availability
+- active streaming behaviour
+
+## Monitoring DAG
+
+| DAG | Purpose |
+|---|---|
+| `crypto_pipeline_health_check` | Validates pipeline health and streaming activity |
+
+## Health Checks Implemented
+
+The monitoring DAG verifies:
+
+- `crypto_metrics` table exists
+- `daily_crypto_summary` table exists
+- recent streaming rows are arriving
+- row counts continue increasing over time
+
+This allows the system to distinguish between:
+- healthy infrastructure
+- stale pipelines
+- inactive ingestion
+- streaming interruptions
+
+## Behavioural Monitoring
+
+The row-growth check performs active behavioural validation by:
+
+1. recording the current row count
+2. waiting for new streaming events
+3. verifying that additional rows were inserted
+
+This is stronger than simple existence checks because it confirms that the streaming pipeline is actively processing new data.
+
+---
+
 # Current Project Structure
 
 ```text
@@ -179,7 +220,6 @@ crypto-streaming-pipeline/
 Planned extensions include:
 
 - sentiment ingestion pipeline
-- monitoring and logging
 - Docker Compose full-stack deployment
 - dashboards/visualization
 - cloud deployment
