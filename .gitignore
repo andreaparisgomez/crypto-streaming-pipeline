@@ -1,7 +1,13 @@
 .env
 airflow/.env
+
 __pycache__/
 .ipynb_checkpoints/
+*.pyc
+
 checkpoints/
 logs/
-*.pyc
+
+*.crc
+spark-warehouse/
+metastore_db/
