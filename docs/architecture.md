@@ -159,6 +159,72 @@ In this architecture, Airflow operates on persisted streaming data rather than o
 
 ---
 
+# Sentiment Streaming Extension
+
+The project now includes a parallel real-time sentiment ingestion pipeline using YouTube comments as a social sentiment source.
+
+```text
+YouTube Data API
+        ↓
+Python Kafka Producer
+        ↓
+Kafka Topic: youtube_raw_comments
+        ↓
+PySpark Structured Streaming + VADER Sentiment Analysis
+        ↓
+Kafka Topic: youtube_sentiment_metrics
+        ↓
+Python PostgreSQL Consumer
+        ↓
+PostgreSQL: youtube_sentiment_metrics table
+```
+
+The sentiment stream is intentionally parallel to the crypto market stream. Raw social data is ingested separately, processed through Spark, enriched with sentiment metrics, and persisted in PostgreSQL for downstream analytics.
+
+## Sentiment Processing
+
+The Spark sentiment processor performs:
+
+- JSON parsing from Kafka
+- language detection
+- English-only filtering
+- VADER sentiment scoring
+- sentiment label classification
+- engagement scoring using comment likes
+- weighted sentiment calculation
+- writing enriched events back to Kafka
+
+## Sentiment Metrics
+
+Processed sentiment events include:
+
+- `comment_id`
+- `video_id`
+- `video_title`
+- `channel_title`
+- `comment_text`
+- `language`
+- `sentiment_score`
+- `sentiment_label`
+- `engagement_score`
+- `weighted_sentiment_score`
+- `processed_at`
+
+## Data Quality Considerations
+
+The YouTube sentiment stream introduced real-world data quality issues, including:
+
+- duplicate comments across polling cycles
+- disabled comments on some videos
+- multilingual comments
+- spam-like crypto promotion comments
+- noisy user-generated text
+
+The producer includes lightweight deduplication and disabled-video skipping, while the Spark layer filters non-English comments before sentiment analysis.
+
+
+---
+
 # Monitoring and Health Checks
 
 The project includes operational monitoring workflows implemented with Apache Airflow.
@@ -219,9 +285,12 @@ crypto-streaming-pipeline/
 
 Planned extensions include:
 
-- sentiment ingestion pipeline
+- Airflow aggregation DAGs for sentiment analytics
+- spam and bot-comment detection
+- warehouse star schema for dashboard analytics
+- combined market + sentiment analytics
 - Docker Compose full-stack deployment
-- dashboards/visualization
+- dashboards/visualisation
 - cloud deployment
 - schema registry integration
 - Airflow sensors and hooks
