@@ -36,6 +36,7 @@ POSTGRES_DB=crypto_db
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=your_password
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+YOUTUBE_API_KEY=your_youtube_api_key
 ```
 
 ---
@@ -74,6 +75,35 @@ psql -U postgres -d crypto_db \
 
 psql -U postgres -d crypto_db \
   -f sql/create_daily_crypto_summary_table.sql
+```
+
+---
+
+# Sentiment Streaming Tables
+
+Create the sentiment analytics table:
+
+```sql
+CREATE TABLE youtube_sentiment_metrics (
+    comment_id TEXT PRIMARY KEY,
+    platform TEXT,
+    content_type TEXT,
+    video_id TEXT,
+    video_title TEXT,
+    channel_title TEXT,
+    author TEXT,
+    comment_text TEXT,
+    like_count INT,
+    published_at TIMESTAMP,
+    ingested_at TIMESTAMP,
+    source_query TEXT,
+    language TEXT,
+    sentiment_score DOUBLE PRECISION,
+    sentiment_label TEXT,
+    engagement_score DOUBLE PRECISION,
+    weighted_sentiment_score DOUBLE PRECISION,
+    processed_at TIMESTAMP
+);
 ```
 
 ---
@@ -151,6 +181,32 @@ spark-submit \
 
 ```bash
 python postgre_consumer.py
+```
+
+---
+
+# Running the Sentiment Streaming Pipeline
+
+Open separate terminal sessions.
+
+## 1. YouTube Producer
+
+```bash
+python youtube_producer.py
+```
+
+## 2. Spark Sentiment Processor
+
+```bash
+spark-submit \
+  --packages org.apache.spark:spark-sql-kafka-0-10_2.13:4.1.1 \
+  youtube_sentiment_spark_processor.py
+```
+
+## 3. PostgreSQL Sentiment Consumer
+
+```bash
+python youtube_postgres_consumer.py
 ```
 
 ---
