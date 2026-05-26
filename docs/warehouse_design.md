@@ -184,7 +184,8 @@ Examples include:
 
 ### Warehouse Star Schema
 
-![Warehouse Star Schema](../images/warehouse_star_schema.png)
+
+![Warehouse Star Schema](../images/star_schema_warehouse.png)
 
 ---
 
