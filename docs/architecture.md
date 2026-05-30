@@ -171,16 +171,16 @@ PostgreSQL Operational Database
 
 ### Streaming Metrics
 
-The Spark processing layer computes rolling analytical metrics including:
+The Spark processing layer computes rolling analytical metrics for each cryptocurrency over a 1-minute aggregation window, including:
 
-- average price
-- minimum price
-- maximum price
-- volatility calculations
-- market capitalisation
-- trading volume
+- Average price (`avg_price`)
+- Minimum price (`min_price`)
+- Maximum price (`max_price`)
+- Volatility (`stddev(price_usd)`), calculated as the standard deviation of observed prices within the aggregation window
+- Market capitalisation (`market_cap`), provided directly by the CoinGecko API
+- Trading volume (`volume`), representing the reported 24-hour trading volume provided by the CoinGecko API
 
-These processed metrics are persisted into PostgreSQL for downstream warehousing and analytics.
+Note: The current volatility metric measures short-term price dispersion within a Spark window rather than the standard financial definition of volatility based on asset returns.
 
 ---
 
