@@ -6,41 +6,36 @@ CREATE TABLE IF NOT EXISTS historical_crypto_prices (
     id SERIAL PRIMARY KEY,
 
     coin_id TEXT NOT NULL,
-    symbol TEXT,
-    coin_name TEXT,
+    currency TEXT NOT NULL,
 
-    price_date DATE NOT NULL,
+    price_timestamp TIMESTAMP NOT NULL,
 
-    current_price FLOAT,
-    market_cap FLOAT,
-    total_volume FLOAT,
+    price_usd NUMERIC,
+    market_cap NUMERIC,
+    total_volume NUMERIC,
 
-    price_change_percentage_24h FLOAT,
+    source TEXT DEFAULT 'coingecko_historical',
+    ingested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    CONSTRAINT historical_crypto_prices_coin_id_currency_price_timestamp_key
+        UNIQUE (coin_id, currency, price_timestamp)
 );
 
 -- ============================================
 -- Useful Indexes
 -- ============================================
 
-CREATE INDEX IF NOT EXISTS idx_crypto_price_date
-ON historical_crypto_prices(price_date);
+CREATE INDEX IF NOT EXISTS idx_historical_crypto_price_timestamp
+ON historical_crypto_prices(price_timestamp);
 
-CREATE INDEX IF NOT EXISTS idx_crypto_coin_id
+CREATE INDEX IF NOT EXISTS idx_historical_crypto_coin_id
 ON historical_crypto_prices(coin_id);
 
-CREATE INDEX IF NOT EXISTS idx_crypto_coin_date
-ON historical_crypto_prices(coin_id, price_date);
+CREATE INDEX IF NOT EXISTS idx_historical_crypto_coin_currency_timestamp
+ON historical_crypto_prices(coin_id, currency, price_timestamp);
 
--- ============================================
--- Optional Uniqueness Constraint
--- Prevent duplicate records per coin per day
--- ============================================
-
-ALTER TABLE historical_crypto_prices
-ADD CONSTRAINT unique_coin_date
-UNIQUE (coin_id, price_date);
+CREATE INDEX IF NOT EXISTS idx_historical_crypto_source
+ON historical_crypto_prices(source);
 
 -- ============================================
 -- Validation Queries
@@ -53,15 +48,19 @@ UNIQUE (coin_id, price_date);
 -- SELECT DISTINCT coin_id
 -- FROM historical_crypto_prices;
 
--- Check date range
--- SELECT MIN(price_date), MAX(price_date)
+-- Check available currencies
+-- SELECT DISTINCT currency
+-- FROM historical_crypto_prices;
+
+-- Check timestamp range
+-- SELECT MIN(price_timestamp), MAX(price_timestamp)
 -- FROM historical_crypto_prices;
 
 -- Daily average prices
 -- SELECT
---     price_date,
+--     DATE(price_timestamp) AS price_date,
 --     coin_id,
---     AVG(current_price)
+--     AVG(price_usd) AS avg_price_usd
 -- FROM historical_crypto_prices
--- GROUP BY price_date, coin_id
--- ORDER BY price_date;
+-- GROUP BY DATE(price_timestamp), coin_id
+-- ORDER BY price_date, coin_id;
