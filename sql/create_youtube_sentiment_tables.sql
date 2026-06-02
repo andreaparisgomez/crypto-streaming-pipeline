@@ -3,30 +3,38 @@
 -- ============================================
 
 -- ============================================
--- Raw / Processed Sentiment Metrics Table
+-- YouTube Sentiment Metrics Table
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS youtube_sentiment_metrics (
     id SERIAL PRIMARY KEY,
 
+    comment_id TEXT UNIQUE NOT NULL,
+
+    platform TEXT,
+    content_type TEXT,
+
     video_id TEXT,
     video_title TEXT,
 
     channel_title TEXT,
+    author TEXT,
     source_query TEXT,
 
     comment_text TEXT,
-
-    sentiment_label TEXT,
-    sentiment_score FLOAT,
-    weighted_sentiment_score FLOAT,
-
     like_count INTEGER,
-    reply_count INTEGER,
-    engagement_score FLOAT,
 
     published_at TIMESTAMP,
-    processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ingested_at TIMESTAMP,
+    processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    language TEXT,
+
+    sentiment_score DOUBLE PRECISION,
+    sentiment_label TEXT,
+
+    engagement_score DOUBLE PRECISION,
+    weighted_sentiment_score DOUBLE PRECISION
 );
 
 -- ============================================
@@ -44,9 +52,9 @@ CREATE TABLE IF NOT EXISTS daily_youtube_sentiment_summary (
 
     comment_count INTEGER,
 
-    avg_sentiment_score FLOAT,
-    avg_weighted_sentiment_score FLOAT,
-    avg_engagement_score FLOAT,
+    avg_sentiment_score DOUBLE PRECISION,
+    avg_weighted_sentiment_score DOUBLE PRECISION,
+    avg_engagement_score DOUBLE PRECISION,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -54,6 +62,9 @@ CREATE TABLE IF NOT EXISTS daily_youtube_sentiment_summary (
 -- ============================================
 -- Useful Indexes
 -- ============================================
+
+CREATE INDEX IF NOT EXISTS idx_youtube_comment_id
+ON youtube_sentiment_metrics(comment_id);
 
 CREATE INDEX IF NOT EXISTS idx_youtube_processed_at
 ON youtube_sentiment_metrics(processed_at);
@@ -67,11 +78,23 @@ ON youtube_sentiment_metrics(channel_title);
 CREATE INDEX IF NOT EXISTS idx_youtube_sentiment_label
 ON youtube_sentiment_metrics(sentiment_label);
 
+CREATE INDEX IF NOT EXISTS idx_youtube_source_query
+ON youtube_sentiment_metrics(source_query);
+
+CREATE INDEX IF NOT EXISTS idx_youtube_language
+ON youtube_sentiment_metrics(language);
+
 CREATE INDEX IF NOT EXISTS idx_daily_summary_date
 ON daily_youtube_sentiment_summary(summary_date);
 
 CREATE INDEX IF NOT EXISTS idx_daily_summary_channel
 ON daily_youtube_sentiment_summary(channel_title);
+
+CREATE INDEX IF NOT EXISTS idx_daily_summary_source_query
+ON daily_youtube_sentiment_summary(source_query);
+
+CREATE INDEX IF NOT EXISTS idx_daily_summary_sentiment_label
+ON daily_youtube_sentiment_summary(sentiment_label);
 
 -- ============================================
 -- Validation Queries
