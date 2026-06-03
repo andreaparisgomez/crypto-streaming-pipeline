@@ -8,8 +8,7 @@ CREATE TABLE IF NOT EXISTS dim_date (
     year INTEGER,
     month INTEGER,
     day INTEGER,
-    quarter INTEGER,
-    weekday INTEGER
+    weekday TEXT
 );
 
 CREATE TABLE IF NOT EXISTS dim_source (
