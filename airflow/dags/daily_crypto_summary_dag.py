@@ -97,6 +97,13 @@ def load_daily_summary():
                 number_of_windows
             )
             VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (coin, summary_date)
+            DO UPDATE SET
+                avg_price = EXCLUDED.avg_price,
+                min_price = EXCLUDED.min_price,
+                max_price = EXCLUDED.max_price,
+                avg_volatility = EXCLUDED.avg_volatility,
+                number_of_windows = EXCLUDED.number_of_windows;
             """,
             (
                 row["coin"],
