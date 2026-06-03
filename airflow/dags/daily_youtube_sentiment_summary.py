@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-import pandas as pd
 import psycopg2
 from airflow import DAG
 from airflow.providers.standard.operators.python import PythonOperator
@@ -30,36 +29,43 @@ def aggregate_youtube_sentiment():
     cursor = conn.cursor()
 
     cursor.execute("""
-        TRUNCATE TABLE daily_youtube_sentiment_summary;
-    """)
-
-    cursor.execute("""
         INSERT INTO daily_youtube_sentiment_summary (
-    summary_date,
-    source_query,
-    channel_title,
-    sentiment_label,
-    comment_count,
-    avg_sentiment_score,
-    avg_weighted_sentiment_score,
-    avg_engagement_score
-)
-SELECT
-    DATE(published_at) AS summary_date,
-    source_query,
-    channel_title,
-    sentiment_label,
-    COUNT(*) AS comment_count,
-    AVG(sentiment_score),
-    AVG(weighted_sentiment_score),
-    AVG(engagement_score)
-FROM youtube_sentiment_metrics
-GROUP BY
-    DATE(published_at),
-    source_query,
-    channel_title,
-    sentiment_label;
-""")
+            summary_date,
+            source_query,
+            channel_title,
+            sentiment_label,
+            comment_count,
+            avg_sentiment_score,
+            avg_weighted_sentiment_score,
+            avg_engagement_score
+        )
+        SELECT
+            DATE(published_at) AS summary_date,
+            source_query,
+            channel_title,
+            sentiment_label,
+            COUNT(*) AS comment_count,
+            AVG(sentiment_score),
+            AVG(weighted_sentiment_score),
+            AVG(engagement_score)
+        FROM youtube_sentiment_metrics
+        GROUP BY
+            DATE(published_at),
+            source_query,
+            channel_title,
+            sentiment_label
+        ON CONFLICT (
+            summary_date,
+            source_query,
+            channel_title,
+            sentiment_label
+        )
+        DO UPDATE SET
+            comment_count = EXCLUDED.comment_count,
+            avg_sentiment_score = EXCLUDED.avg_sentiment_score,
+            avg_weighted_sentiment_score = EXCLUDED.avg_weighted_sentiment_score,
+            avg_engagement_score = EXCLUDED.avg_engagement_score;
+    """)
 
     conn.commit()
 
