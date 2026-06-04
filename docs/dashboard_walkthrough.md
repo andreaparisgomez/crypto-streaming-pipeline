@@ -4,14 +4,13 @@
 
 The dashboard layer provides a visual analytics interface for the cryptocurrency streaming and sentiment analysis platform.
 
-The dashboards are powered by:
+The dashboard layer is implemented in Looker Studio and powered by data generated through:
 
-- Apache Kafka
-- PySpark Structured Streaming
-- PostgreSQL
-- Apache Airflow
-- Neon PostgreSQL Warehouse
-- Looker Studio
+* Apache Kafka
+* PySpark Structured Streaming
+* PostgreSQL
+* Apache Airflow
+* Neon PostgreSQL Warehouse
 
 The visualisation layer consumes analytical views from the Neon warehouse and exposes both market and sentiment-oriented insights through interactive dashboards.
 
@@ -25,7 +24,7 @@ The dashboard suite is divided into three primary analytical areas:
 
 ## Dashboard Architecture
 
-The dashboard layer sits on top of the analytical warehouse and consumes transformed warehouse views rather than raw streaming tables.
+The dashboard layer sits on top of the analytical warehouse and consumes curated warehouse views rather than operational streaming tables.
 
 ```text
 Streaming Pipelines
@@ -41,13 +40,13 @@ Dashboard Views
 Looker Studio
 ```
 
-This separation improves:
+This architecture improves:
 
-- dashboard query performance
-- analytical consistency
-- historical aggregation
-- maintainability
-- dimensional modelling support
+* dashboard query performance
+* analytical consistency
+* maintainability
+* historical aggregation
+* scalability
 
 ---
 
@@ -63,11 +62,11 @@ The first dashboard page focuses on cryptocurrency market behaviour and historic
 
 This dashboard is designed to provide:
 
-- historical cryptocurrency price analysis
-- comparative asset performance
-- market capitalisation tracking
-- trading volume monitoring
-- interactive asset filtering
+* historical cryptocurrency price analysis
+* comparative asset performance
+* market capitalisation tracking
+* trading volume monitoring
+* interactive asset filtering
 
 The page aggregates processed market metrics generated through the Spark streaming pipeline.
 
@@ -77,9 +76,9 @@ The page aggregates processed market metrics generated through the Spark streami
 
 The dashboard includes KPI cards displaying:
 
-- latest Bitcoin price
-- latest Ethereum price
-- latest Solana price
+* latest Bitcoin price
+* latest Ethereum price
+* latest Solana price
 
 These metrics are dynamically refreshed from the warehouse layer.
 
@@ -89,20 +88,20 @@ These metrics are dynamically refreshed from the warehouse layer.
 
 The historical price trend visualisation displays:
 
-- Bitcoin
-- Ethereum
-- Solana
+* Bitcoin
+* Ethereum
+* Solana
 
 across the historical collection window.
 
 The chart allows rapid visual comparison between:
 
-- asset volatility
-- trend direction
-- relative growth behaviour
-- major market corrections
+* asset volatility
+* trend direction
+* relative growth behaviour
+* major market corrections
 
-A logarithmic scaling approach was used to improve multi-asset readability due to large differences in asset price ranges.
+A logarithmic scaling approach was used to improve readability due to the large differences in asset price ranges.
 
 ---
 
@@ -112,10 +111,10 @@ The market capitalisation chart tracks relative market dominance across assets o
 
 This visualisation helps identify:
 
-- macro market shifts
-- relative asset strength
-- capital concentration behaviour
-- broader market trend changes
+* macro market shifts
+* relative asset strength
+* capital concentration behaviour
+* broader market trends
 
 ---
 
@@ -153,11 +152,11 @@ The second dashboard page focuses on cryptocurrency-related YouTube sentiment an
 
 This dashboard provides visibility into:
 
-- social sentiment trends
-- creator engagement
-- audience behaviour
-- positive vs negative sentiment distribution
-- engagement-weighted sentiment patterns
+* social sentiment trends
+* creator engagement
+* audience behaviour
+* positive versus negative sentiment distribution
+* engagement-weighted sentiment patterns
 
 The underlying data is collected from cryptocurrency-related YouTube comments and processed through the Spark sentiment pipeline.
 
@@ -167,11 +166,11 @@ The underlying data is collected from cryptocurrency-related YouTube comments an
 
 The sentiment analytics layer performs:
 
-- sentiment scoring using VADER
-- sentiment label classification
-- engagement scoring
-- weighted sentiment calculations
-- metadata enrichment
+* sentiment scoring using VADER
+* sentiment label classification
+* engagement scoring
+* weighted sentiment calculations
+* metadata enrichment
 
 These processed events are aggregated into warehouse fact tables before dashboard visualisation.
 
@@ -183,9 +182,9 @@ This visualisation ranks YouTube channels according to average sentiment score.
 
 The chart enables rapid identification of:
 
-- highly positive creators
-- neutral discussion channels
-- negative sentiment outliers
+* highly positive creators
+* neutral discussion channels
+* negative sentiment outliers
 
 This creates an exploratory layer for comparing sentiment behaviour across different content creators.
 
@@ -193,11 +192,11 @@ This creates an exploratory layer for comparing sentiment behaviour across diffe
 
 ## Comment Sentiment Distribution
 
-The sentiment distribution pie chart displays the proportional breakdown of:
+The sentiment distribution chart displays the proportional breakdown of:
 
-- positive comments
-- neutral comments
-- negative comments
+* positive comments
+* neutral comments
+* negative comments
 
 This provides a high-level overview of audience sentiment across the collected dataset.
 
@@ -211,23 +210,9 @@ This introduces an additional analytical dimension beyond simple sentiment polar
 
 High-engagement content can therefore be compared against:
 
-- sentiment direction
-- audience interaction intensity
-- creator influence
-
----
-
-## Dashboard Interpretation Notes
-
-The current sentiment dataset is relatively small due to local infrastructure runtime constraints and limited collection windows.
-
-As a result:
-
-- the dashboard is architecturally representative
-- the visualisations demonstrate pipeline functionality
-- the platform is designed for longer-running ingestion and larger-scale future collection
-
-The current results should therefore be interpreted as exploratory rather than statistically conclusive.
+* sentiment direction
+* audience interaction intensity
+* creator influence
 
 ---
 
@@ -245,10 +230,10 @@ This dashboard investigates whether changes in social sentiment coincide with or
 
 The visualisation combines:
 
-- historical Bitcoin price movement
-- daily sentiment events
-- sentiment polarity spikes
-- temporal market context
+* historical Bitcoin price movement
+* daily sentiment events
+* sentiment polarity spikes
+* temporal market context
 
 ---
 
@@ -256,32 +241,32 @@ The visualisation combines:
 
 The dashboard overlays:
 
-- Bitcoin price trends
-- daily sentiment score events
+* Bitcoin price trends
+* daily sentiment score events
 
 onto a shared timeline.
 
 This allows users to visually inspect:
 
-- sentiment spikes
-- negative sentiment events
-- potential market reactions
-- temporal clustering behaviour
+* sentiment spikes
+* negative sentiment events
+* potential market reactions
+* temporal clustering behaviour
 
 ---
 
 ## Event-Time Alignment Challenges
 
-One major challenge in building the correlation dashboard involved temporal alignment between:
+One challenge in building the correlation dashboard involved temporal alignment between:
 
-- continuously collected market data
-- intermittently collected sentiment events
+* continuously collected market data
+* intermittently collected sentiment events
 
-The sentiment collection layer produced sparse event timestamps compared with the denser cryptocurrency price stream.
+The sentiment collection layer produced relatively sparse event timestamps compared with the denser cryptocurrency price stream.
 
 Several iterations of aggregation logic and event alignment were therefore required to make the dashboard visually interpretable.
 
-This became an important engineering consideration in the analytical design process.
+This became an important engineering consideration during development.
 
 ---
 
@@ -291,11 +276,11 @@ The current dashboard should not be interpreted as evidence of causal financial 
 
 Instead, the purpose of the dashboard is to demonstrate:
 
-- cross-domain analytical integration
-- streaming data fusion
-- event-time alignment
-- sentiment aggregation workflows
-- exploratory analytical visualisation
+* cross-domain analytical integration
+* streaming data fusion
+* event-time alignment
+* sentiment aggregation workflows
+* exploratory analytical visualisation
 
 The dashboard primarily represents an architectural and analytical proof of concept.
 
@@ -311,10 +296,10 @@ Several design decisions were made intentionally during dashboard development.
 
 A dark visual theme was selected to:
 
-- improve readability
-- create stronger chart contrast
-- align with financial analytics aesthetics
-- reduce visual clutter
+* improve readability
+* create stronger chart contrast
+* align with financial analytics aesthetics
+* reduce visual clutter
 
 ---
 
@@ -322,82 +307,39 @@ A dark visual theme was selected to:
 
 The dashboards prioritise:
 
-- high information density
-- minimal decorative elements
-- analytical readability
-- consistent spacing
-- clear chart separation
+* analytical readability
+* high information density
+* consistent spacing
+* clear chart separation
+* minimal decorative elements
 
 ---
 
-## Layer Separation
+# Limitations and Future Work
 
-The dashboards consume analytical warehouse views rather than operational streaming tables directly.
+The current implementation has several limitations that primarily reflect development-scale infrastructure rather than architectural constraints.
 
-This separation improves:
+Current limitations include:
 
-- maintainability
-- query stability
-- dashboard responsiveness
-- analytical consistency
+* relatively limited historical sentiment data
+* lower sentiment event density compared with market data
+* dashboard refresh latency introduced by warehouse loading schedules and Looker Studio refresh behaviour
+* coverage focused primarily on Bitcoin, Ethereum, and Solana
 
----
+As a result, the dashboards should be interpreted as analytical proof-of-concept implementations rather than statistically conclusive market intelligence systems.
 
-# Current Limitations
+Potential future enhancements include:
 
-The current implementation has several intentional limitations.
-
----
-
-## Limited Historical Sentiment Data
-
-The sentiment pipeline currently operates using local infrastructure and intermittent collection windows.
-
-This limits:
-
-- historical depth
-- event density
-- statistical significance
-
----
-
-## Dashboard Refresh Latency
-
-Although the streaming layer updates continuously, dashboard refresh intervals are constrained by:
-
-- warehouse refresh workflows
-- Looker Studio refresh behaviour
-- scheduled aggregation timing
-
-The platform therefore behaves as a near real-time analytical system rather than a fully streaming-native dashboard environment.
-
----
-
-## Limited Asset Coverage
-
-The current implementation focuses primarily on:
-
-- Bitcoin
-- Ethereum
-- Solana
-
-Additional assets can be incorporated through future pipeline expansion.
-
----
-
-# Future Improvements
-
-Potential future dashboard improvements include:
-
-- additional social platforms
-- expanded asset coverage
-- lower-latency dashboard refresh intervals
-- anomaly detection visualisations
-- streaming-native dashboard updates
-- sentiment trend forecasting
-- advanced warehouse modelling
-- automated monitoring dashboards
-- larger-scale historical ingestion
+* additional social media platforms
+* expanded cryptocurrency coverage
+* lower-latency dashboard refresh intervals
+* anomaly detection visualisations
+* streaming-native dashboard technologies
+* sentiment trend forecasting
+* advanced warehouse modelling
+* automated monitoring dashboards
+* larger-scale historical ingestion
+* improved sentiment aggregation using comment-count-weighted averages to reduce aggregation bias in daily sentiment summaries
 
 ---
 
@@ -407,11 +349,11 @@ The dashboard layer transforms the underlying streaming and warehousing infrastr
 
 The resulting platform demonstrates:
 
-- real-time streaming analytics
-- sentiment enrichment
-- dimensional warehousing
-- dashboard engineering
-- cross-domain analytical integration
-- distributed data platform design
+* real-time streaming analytics
+* sentiment enrichment
+* dimensional warehousing
+* dashboard engineering
+* cross-domain analytical integration
+* distributed data platform design
 
 The dashboards ultimately serve as the presentation layer for a broader end-to-end data engineering architecture.
