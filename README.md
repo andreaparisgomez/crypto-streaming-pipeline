@@ -29,6 +29,7 @@ The project evolved from a simple streaming pipeline into a complete analytics p
 Detailed project documentation is available in:
 
 * `docs/architecture.md`
+* `docs/analytics_design_decisions.md`
 * `docs/warehouse_design.md`
 * `docs/dashboard_walkthrough.md`
 * `docs/monitoring_architecture.md`
