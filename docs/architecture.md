@@ -6,12 +6,12 @@ This project is a hybrid real-time and batch data engineering platform for crypt
 
 The architecture combines:
 
-- real-time event streaming
-- distributed stream processing
-- operational relational storage
-- cloud analytical warehousing
-- scheduled orchestration
-- dashboard visualisation
+* real-time event streaming
+* distributed stream processing
+* operational relational storage
+* cloud analytical warehousing
+* scheduled orchestration
+* dashboard visualisation
 
 The platform ingests live cryptocurrency market data from the CoinGecko API alongside cryptocurrency-related YouTube comments, processes streaming analytics using PySpark Structured Streaming, persists operational data in PostgreSQL, orchestrates warehouse workflows using Apache Airflow, and exposes analytical insights through Looker Studio dashboards.
 
@@ -31,24 +31,24 @@ The platform is intentionally separated into several architectural layers.
 
 Responsible for:
 
-- real-time event ingestion
-- stream transport
-- distributed processing
-- rolling aggregations
-- asynchronous communication
+* real-time event ingestion
+* stream transport
+* distributed processing
+* rolling aggregations
+* asynchronous communication
 
 The streaming layer is built around Apache Kafka and PySpark Structured Streaming.
 
 #### Core Components
 
-| Component | Purpose |
-|---|---|
-| CoinGecko API | Live cryptocurrency market data |
-| YouTube Data API | Cryptocurrency-related social sentiment data |
-| Kafka Producers | Publish raw streaming events |
-| Kafka Topics | Decoupled event transport |
-| PySpark Structured Streaming | Real-time processing and transformations |
-| Python PostgreSQL Consumers | Persist processed streaming outputs |
+| Component                    | Purpose                                      |
+| ---------------------------- | -------------------------------------------- |
+| CoinGecko API                | Live cryptocurrency market data              |
+| YouTube Data API             | Cryptocurrency-related social sentiment data |
+| Kafka Producers              | Publish raw streaming events                 |
+| Kafka Topics                 | Decoupled event transport                    |
+| PySpark Structured Streaming | Real-time processing and transformations     |
+| Python PostgreSQL Consumers  | Persist processed streaming outputs          |
 
 ---
 
@@ -56,18 +56,19 @@ The streaming layer is built around Apache Kafka and PySpark Structured Streamin
 
 Responsible for:
 
-- intermediate persistence
-- streaming output storage
-- near real-time operational querying
+* intermediate persistence
+* streaming output storage
+* near real-time operational querying
 
 The operational PostgreSQL database (`crypto_db`) stores processed outputs from the streaming layer before downstream analytical transformation.
 
 Examples include:
 
-- `crypto_metrics`
-- `historical_crypto_prices`
-- `youtube_sentiment_metrics`
-- `daily_youtube_sentiment_summary`
+* `crypto_metrics`
+* `historical_crypto_prices`
+* `youtube_sentiment_metrics`
+
+In addition, Airflow-generated analytical summary tables such as `daily_youtube_sentiment_summary` are maintained within the operational database.
 
 This layer prioritises ingestion and persistence rather than analytical querying.
 
@@ -77,20 +78,20 @@ This layer prioritises ingestion and persistence rather than analytical querying
 
 Responsible for:
 
-- scheduled warehouse workflows
-- analytical aggregation
-- monitoring and health checks
-- warehouse loading automation
+* scheduled warehouse workflows
+* analytical aggregation
+* monitoring and health checks
+* warehouse loading automation
 
 Apache Airflow orchestrates workflows independently from the streaming infrastructure.
 
 Key responsibilities include:
 
-- loading warehouse fact tables
-- aggregating daily summaries
-- warehouse validation
-- monitoring pipeline behaviour
-- orchestrating analytical refresh workflows
+* loading warehouse fact tables
+* aggregating daily summaries
+* warehouse validation
+* monitoring pipeline behaviour
+* orchestrating analytical refresh workflows
 
 This separation between streaming and orchestration reflects common modern data platform design patterns.
 
@@ -100,27 +101,29 @@ This separation between streaming and orchestration reflects common modern data 
 
 Responsible for:
 
-- historical analytical storage
-- dimensional modelling
-- dashboard querying
-- aggregated reporting
+* historical analytical storage
+* dimensional modelling
+* dashboard querying
+* aggregated reporting
 
 The analytical warehouse is implemented using Neon PostgreSQL.
 
 The warehouse follows a simplified star schema design composed of:
 
-- fact tables
-- dimension tables
-- analytical views
+* fact tables
+* dimension tables
+* analytical views
+
+The warehouse is populated through ELT workflows and exposed to downstream dashboards through curated analytical views.
 
 Examples include:
 
-- `fact_crypto_price_daily`
-- `fact_youtube_sentiment_daily`
-- `dim_date`
-- `dim_source`
-- `dim_channel`
-- `dim_sentiment_label`
+* `fact_crypto_price_daily`
+* `fact_youtube_sentiment_daily`
+* `dim_date`
+* `dim_source`
+* `dim_channel`
+* `dim_sentiment_label`
 
 Further warehouse design details are documented in `warehouse_design.md`.
 
@@ -130,10 +133,10 @@ Further warehouse design details are documented in `warehouse_design.md`.
 
 Responsible for:
 
-- business-oriented visualisation
-- historical trend analysis
-- sentiment analytics
-- market correlation analysis
+* business-oriented visualisation
+* historical trend analysis
+* sentiment analytics
+* market correlation analysis
 
 Looker Studio consumes analytical warehouse views exposed from the Neon warehouse layer.
 
@@ -171,16 +174,18 @@ PostgreSQL Operational Database
 
 ### Streaming Metrics
 
-The Spark processing layer computes rolling analytical metrics for each cryptocurrency over a 1-minute aggregation window, including:
+The Spark processing layer computes rolling analytical metrics for each cryptocurrency over a one-minute aggregation window, including:
 
-- Average price (`avg_price`)
-- Minimum price (`min_price`)
-- Maximum price (`max_price`)
-- Volatility (`stddev(price_usd)`), calculated as the standard deviation of observed prices within the aggregation window
-- Market capitalisation (`market_cap`), provided directly by the CoinGecko API
-- Trading volume (`volume`), representing the reported 24-hour trading volume provided by the CoinGecko API
+* Average price (`avg_price`)
+* Minimum price (`min_price`)
+* Maximum price (`max_price`)
+* Volatility (`stddev(price_usd)`), calculated as the standard deviation of observed prices within the aggregation window
+* Market capitalisation (`market_cap`), provided directly by the CoinGecko API
+* Trading volume (`volume`), representing the reported 24-hour trading volume provided by the CoinGecko API
 
-Note: The current volatility metric measures short-term price dispersion within a Spark window rather than the standard financial definition of volatility based on asset returns.
+### Note on Volatility
+
+The current volatility metric measures short-term price dispersion within a Spark aggregation window rather than the standard financial definition of volatility based on asset returns.
 
 ---
 
@@ -206,7 +211,7 @@ Python PostgreSQL Consumer
 PostgreSQL Operational Database
 ```
 
-The sentiment stream operates independently from the market data stream while sharing downstream warehousing and orchestration infrastructure.
+The sentiment stream operates independently from the market data stream whilst sharing downstream warehousing and orchestration infrastructure.
 
 ---
 
@@ -214,13 +219,13 @@ The sentiment stream operates independently from the market data stream while sh
 
 The Spark sentiment processor performs:
 
-- Kafka JSON parsing
-- multilingual filtering
-- sentiment scoring using VADER
-- sentiment label classification
-- engagement scoring
-- weighted sentiment calculations
-- metadata enrichment
+* Kafka JSON parsing
+* multilingual filtering
+* sentiment scoring using VADER
+* sentiment label classification
+* engagement scoring
+* weighted sentiment calculations
+* metadata enrichment
 
 Processed events are written back into Kafka before persistence into PostgreSQL.
 
@@ -230,17 +235,17 @@ Processed events are written back into Kafka before persistence into PostgreSQL.
 
 The platform includes operational monitoring workflows implemented with Apache Airflow.
 
-The monitoring layer validates:
+Monitoring workflows validate:
 
-- infrastructure availability
-- warehouse loading behaviour
-- streaming activity
-- table freshness
-- row growth behaviour
+* streaming freshness
+* data quality
+* warehouse population
+* dashboard readiness
+* analytical integrity
 
-Monitoring DAGs currently include behavioural checks to confirm that streaming tables continue receiving new events over time rather than simply verifying table existence.
+The monitoring layer is designed to detect operational issues across the platform before they impact downstream analytics and reporting.
 
-The monitoring layer is intentionally designed to expand further as the platform evolves.
+Further monitoring details are documented in `monitoring_architecture.md`.
 
 ---
 
@@ -250,12 +255,12 @@ The monitoring layer is intentionally designed to expand further as the platform
 
 Kafka provides:
 
-- decoupled producers and consumers
-- durable event transport
-- asynchronous communication
-- scalable streaming infrastructure
+* decoupled event transport
+* durable message persistence
+* asynchronous communication
+* scalable streaming infrastructure
 
-This allows independent services to operate without tight coupling.
+This allows producers, processors and consumers to operate independently.
 
 ---
 
@@ -263,13 +268,13 @@ This allows independent services to operate without tight coupling.
 
 Spark Structured Streaming enables:
 
-- distributed stream processing
-- rolling aggregations
-- fault-tolerant checkpointing
-- event-time processing
-- scalable streaming transformations
+* distributed stream processing
+* rolling aggregations
+* fault-tolerant checkpointing
+* event-time processing
+* scalable streaming transformations
 
-This replaces manual state management and supports more production-oriented streaming workflows.
+This removes the need for manual state management and supports production-oriented streaming workflows.
 
 ---
 
@@ -277,10 +282,10 @@ This replaces manual state management and supports more production-oriented stre
 
 PostgreSQL provides:
 
-- reliable relational persistence
-- analytical querying support
-- compatibility with Airflow workflows
-- structured intermediate storage
+* reliable relational persistence
+* analytical querying support
+* compatibility with Airflow workflows
+* structured intermediate storage
 
 The operational database acts as persistence between streaming infrastructure and downstream analytics.
 
@@ -290,12 +295,12 @@ The operational database acts as persistence between streaming infrastructure an
 
 Airflow orchestrates:
 
-- scheduled analytical workflows
-- warehouse loading
-- monitoring tasks
-- historical aggregation
+* warehouse loading
+* analytical aggregation
+* monitoring workflows
+* scheduled refresh operations
 
-The orchestration layer operates independently from the streaming infrastructure, enabling clearer separation between real-time processing and scheduled analytical workflows.
+The orchestration layer operates independently from the streaming infrastructure, enabling clear separation between real-time processing and scheduled analytical workloads.
 
 ---
 
@@ -303,12 +308,12 @@ The orchestration layer operates independently from the streaming infrastructure
 
 Neon provides:
 
-- cloud-hosted PostgreSQL warehousing
-- scalable analytical querying
-- separation between operational and analytical workloads
-- dashboard-friendly storage architecture
+* cloud-hosted PostgreSQL warehousing
+* scalable analytical querying
+* separation between operational and analytical workloads
+* dashboard-friendly storage architecture
 
-This allows the platform to maintain a dedicated analytical layer separate from operational streaming persistence.
+This enables a dedicated analytical layer separate from operational streaming persistence.
 
 ---
 
@@ -332,16 +337,16 @@ crypto-streaming-pipeline/
 
 Planned future improvements include:
 
-- expanded monitoring and observability
-- additional social sentiment sources
-- cloud deployment
-- automated alerting
-- larger-scale historical sentiment ingestion
-- warehouse validation automation
-- lower-latency dashboard refresh intervals
-- dbt transformation layers
-- CI/CD workflows
-- distributed infrastructure deployment
+* expanded monitoring and observability
+* additional social sentiment sources
+* cloud deployment
+* automated alerting
+* larger-scale historical sentiment ingestion
+* warehouse validation automation
+* lower-latency dashboard refresh intervals
+* dbt transformation layers
+* CI/CD workflows
+* distributed infrastructure deployment
 
 ---
 
@@ -349,13 +354,13 @@ Planned future improvements include:
 
 The platform evolved from a simple cryptocurrency streaming pipeline into a broader analytics architecture combining:
 
-- distributed event streaming
-- stream processing
-- operational persistence
-- orchestration
-- cloud warehousing
-- dimensional modelling
-- sentiment analytics
-- dashboard reporting
+* distributed event streaming
+* stream processing
+* operational persistence
+* orchestration
+* cloud warehousing
+* dimensional modelling
+* sentiment analytics
+* dashboard reporting
 
-The resulting architecture more closely resembles modern real-world analytics engineering and data platform workflows.
+The resulting platform demonstrates how streaming, warehousing, orchestration, monitoring and analytics can be integrated into a cohesive end-to-end data engineering architecture.
