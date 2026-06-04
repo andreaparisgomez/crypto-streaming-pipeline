@@ -126,7 +126,7 @@ The DAG validates:
   - negative
 
 Additional checks:
-- no negative engagement counts
+- no negative like counts
 - no incomplete processed records
 
 ---
@@ -152,7 +152,7 @@ Checks:
 - non-empty population
 
 Purpose:
-- validate Airflow warehouse loading DAGs
+- validate warehouse loading workflows
 - detect failed ELT operations
 - validate analytical model integrity
 
