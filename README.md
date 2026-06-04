@@ -2,20 +2,19 @@
 
 ## Overview
 
-A real-time crypto analytics platform built with Kafka, PySpark, PostgreSQL, Airflow, and Neon PostgreSQL.
+A real-time cryptocurrency analytics platform built using Kafka, PySpark, PostgreSQL, Airflow, Neon PostgreSQL, and Looker Studio.
 
-The platform ingests live cryptocurrency market data and YouTube crypto sentiment data, processes both streams in real time, stores operational data in PostgreSQL, loads analytical aggregates into a dimensional warehouse, and powers dashboard-ready analytical views.
+The platform ingests live cryptocurrency market data alongside cryptocurrency-related YouTube sentiment data, processes both streams in real time, stores operational outputs in PostgreSQL, loads analytical aggregates into a cloud warehouse, and exposes business-facing insights through interactive dashboards.
 
-The project evolved from a simple streaming pipeline into a production-style analytics platform with:
+The project evolved from a simple streaming pipeline into a complete analytics platform incorporating:
 
-- real-time streaming ingestion
-- Spark Structured Streaming transformations
-- sentiment analysis pipelines
-- dimensional warehouse modelling
-- Airflow orchestration
-- platform monitoring and observability
-- dashboard-ready analytical views
-- operational health checks
+* real-time event streaming
+* distributed stream processing
+* sentiment analysis
+* dimensional warehousing
+* Airflow orchestration
+* monitoring and observability
+* analytical dashboarding
 
 ---
 
@@ -25,43 +24,52 @@ The project evolved from a simple streaming pipeline into a production-style ana
 
 ---
 
+# Documentation
+
+Detailed project documentation is available in:
+
+* `docs/architecture.md`
+* `docs/warehouse_design.md`
+* `docs/dashboard_walkthrough.md`
+* `docs/monitoring_architecture.md`
+
+---
+
 # Tech Stack
 
 ## Streaming & Processing
 
-- Apache Kafka
-- PySpark Structured Streaming
-- Python
+* Apache Kafka
+* PySpark Structured Streaming
+* Python
 
-## Databases
+## Operational Storage
 
-### Operational Layer
+* PostgreSQL
 
-- PostgreSQL
+## Analytical Warehouse
 
-### Analytical Warehouse
-
-- Neon PostgreSQL
+* Neon PostgreSQL
 
 ## Orchestration & Monitoring
 
-- Apache Airflow
-- Docker Compose
+* Apache Airflow
+* Docker Compose
 
 ## Analytics & BI
 
-- Google Looker Studio
+* Google Looker Studio
 
-## APIs & Data Sources
+## Data Sources
 
-- CoinGecko API
-- YouTube Data API
+* CoinGecko API
+* YouTube Data API
 
 ---
 
 # Platform Architecture
 
-## Crypto Market Pipeline
+## Cryptocurrency Market Pipeline
 
 ```text
 CoinGecko API
@@ -86,7 +94,7 @@ YouTube Data API
         ↓
 Python Kafka Producer
         ↓
-Kafka Topic: youtube_comments
+Kafka Topic: youtube_raw_comments
         ↓
 PySpark Structured Streaming
         ↓
@@ -97,174 +105,129 @@ Python PostgreSQL Consumer
 PostgreSQL Operational Database
 ```
 
----
-
-## Warehouse Layer
+## Analytical Warehouse
 
 Operational PostgreSQL data is transformed into a dimensional warehouse model hosted in Neon PostgreSQL.
 
 The warehouse contains:
 
-- fact tables
-- dimension tables
-- dashboard-ready analytical views
-- aggregated sentiment metrics
-- historical crypto pricing data
+* fact tables
+* dimension tables
+* analytical views
+* aggregated sentiment metrics
+* historical crypto pricing data
 
 ---
 
 # Dashboard Outputs
 
-## Crypto Market Dashboard
+## Cryptocurrency Market Analytics
 
 ![Crypto Market Dashboard](images/1_full_page_crypto_market.png)
 
+Provides:
+
+* cryptocurrency price tracking
+* historical trend analysis
+* market capitalisation monitoring
+* trading volume analysis
+* interactive asset filtering
+
 ---
 
-## Sentiment Monitoring Dashboard
+## Social Sentiment Monitoring
 
 ![Sentiment Monitoring Dashboard](images/2_full_page_sentiment_monitoring.png)
 
+Provides:
+
+* sentiment distribution analysis
+* engagement monitoring
+* creator sentiment ranking
+* weighted sentiment scoring
+* channel-level sentiment insights
+
 ---
 
-## Market Correlation Dashboard
+## Market Sentiment Correlation
 
 ![Market Correlation Dashboard](images/3_full_page_market_correlation.png)
 
----
+Provides:
 
-# Dashboard Features
-
-The dashboards provide:
-
-- cryptocurrency price tracking
-- rolling volatility monitoring
-- sentiment distribution analysis
-- weighted sentiment scoring
-- engagement-based sentiment metrics
-- cross-market sentiment comparison
-- dashboard filtering by cryptocurrency
-
-Example dashboard filtering:
-
-![Dashboard Coin Filter](images/dashboard_coin_filter_bitcoin.png)
+* sentiment event tracking
+* Bitcoin price comparison
+* sentiment trend monitoring
+* exploratory market correlation analysis
 
 ---
 
 # Airflow Orchestration
 
-## Warehouse DAG
-
-Airflow orchestrates warehouse loading operations.
+## Warehouse Loading
 
 ![YouTube Warehouse DAG](images/youtube_sentiment_warehouse_dag.png)
 
-The warehouse DAG:
+Airflow orchestrates:
 
-- loads dimension tables
-- loads aggregated fact tables
-- orchestrates daily warehouse refreshes
-- validates analytical dependencies
+* warehouse loading workflows
+* analytical aggregations
+* scheduled refreshes
+* dependency management
 
 ---
 
-# Monitoring & Observability
-
-A platform-wide monitoring DAG validates the health of the analytics stack.
+## Platform Monitoring
 
 ![Platform Health Check DAG](images/platform_health_check_airflow.png)
 
 The monitoring layer validates:
 
-- streaming ingestion freshness
-- Spark processing completion
-- operational PostgreSQL writes
-- warehouse table population
-- dashboard view readiness
-- data quality rules
-- analytical integrity
-
-This monitoring architecture significantly improved the operational realism of the project.
-
-Detailed monitoring documentation:
-
-```text
-docs/monitoring_architecture.md
-```
+* streaming freshness
+* Spark processing completion
+* operational PostgreSQL writes
+* warehouse population
+* dashboard readiness
+* data quality rules
+* analytical integrity
 
 ---
 
 # Warehouse Design
 
-## Star Schema Design
+## Star Schema
 
 ![Star Schema Warehouse](images/star_schema_warehouse.png)
 
----
+The analytical warehouse follows a simplified star schema design consisting of:
 
-## Warehouse Implementation
+### Fact Tables
 
-Actual PostgreSQL warehouse schema:
+* `fact_crypto_price_daily`
+* `fact_youtube_sentiment_daily`
 
-![Warehouse Schema](images/youtube_sentiment_warehouse_schema.png)
+### Dimension Tables
 
----
-
-## Example Analytical Fact Table
-
-Example analytical warehouse output:
-
-![YouTube Sentiment Fact Table](images/youtube_sentiment_fact_table.png)
-
-The warehouse stores:
-
-- aggregated sentiment metrics
-- weighted engagement scores
-- daily crypto pricing summaries
-- dimensional joins for BI analysis
-- historical analytical data
-
----
-
-# Streaming & Operational Outputs
-
-## Kafka Streaming Output
-
-![Kafka Streaming Output](images/kafka_producer_streaming_output.png)
-
----
-
-## PostgreSQL Live Inserts
-
-![PostgreSQL Live Inserts](images/postgres_live_stream_inserts.png)
-
----
-
-## PostgreSQL Row Growth Monitoring
-
-![PostgreSQL Row Growth](images/postgres_live_row_growth.png)
-
----
-
-## Sentiment PostgreSQL Output
-
-![Sentiment PostgreSQL Output](images/youtube_sentiment_postgres_output.png)
+* `dim_date`
+* `dim_source`
+* `dim_channel`
+* `dim_sentiment_label`
 
 ---
 
 # Docker Infrastructure
 
-The platform is containerised using Docker Compose.
-
 ![Docker Infrastructure](images/docker_infrastructure_services.png)
 
-The Docker infrastructure includes:
+The platform is containerised using Docker Compose.
 
-- Airflow services
-- PostgreSQL
-- Redis
-- Kafka
-- Spark dependencies
+Core services include:
+
+* Kafka
+* Spark
+* PostgreSQL
+* Airflow
+* Redis
 
 ---
 
@@ -273,84 +236,51 @@ The Docker infrastructure includes:
 ```text
 crypto-streaming-pipeline/
 │
-├── README.md
-├── requirements.txt
-├── LICENSE
-├── .gitignore
-│
 ├── airflow/
-│   ├── dags/
-│   │   ├── crypto_pipeline_health_check.py
-│   │   ├── platform_health_check.py
-│   │   ├── load_youtube_sentiment_warehouse.py
-│   │   └── other DAGs...
-│   │
-│   ├── .env.example
-│   └── docker-compose.yaml
-│
 ├── crypto_market_stream/
-│   ├── producer.py
-│   ├── spark_processor.py
-│   ├── postgres_consumer.py
-│   ├── load_crypto_dates_to_warehouse.py
-│   ├── load_crypto_fact_table.py
-│   ├── test_neon_connection.py
-│   │
-│   ├── debug/
-│   ├── legacy/
-│   └── .env.example
-│
 ├── sentiment-stream/
-│   ├── youtube_producer.py
-│   ├── youtube_sentiment_spark_processor.py
-│   ├── youtube_postgres_consumer.py
-│   ├── youtube_api_test.py
-│   ├── youtube_comments_test.py
-│   └── .env.example
-│
 ├── sql/
 ├── scripts/
 ├── docs/
 ├── images/
-└── monitoring/
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
 # Engineering Highlights
 
-## Streaming Systems
+## Streaming & Processing
 
 - Kafka producers and consumers
 - Spark Structured Streaming
-- streaming transformations
 - window aggregations
-- checkpointing
 - micro-batching
+- checkpointing
 
-## Data Engineering
+## Data Engineering & Modelling
 
-- ETL / ELT workflows
-- operational vs analytical data modelling
-- dimensional warehouse design
-- fact and dimension tables
-- analytical aggregation
+- ELT workflow design
+- dimensional warehouse modelling
+- star schema design
+- analytical aggregations
+- operational vs analytical storage separation
 
 ## Infrastructure & Orchestration
 
-- Docker Compose orchestration
-- Airflow DAG design
-- workflow dependencies
-- scheduled warehouse loads
-- platform monitoring
+- Airflow DAG development
+- workflow dependency management
+- scheduled warehouse refreshes
+- Docker Compose deployment
 
 ## Monitoring & Reliability
 
-- healthcheck DAGs
-- freshness monitoring
-- data quality validation
-- warehouse readiness checks
-- operational observability
+- platform health checks
+- data freshness validation
+- data quality monitoring
+- warehouse integrity validation
+- dashboard readiness checks
 
 ---
 
@@ -358,16 +288,15 @@ crypto-streaming-pipeline/
 
 Key engineering challenges encountered during development included:
 
-- Spark Kafka connector compatibility
-- Airflow Docker environment propagation
-- warehouse connectivity debugging
-- schema mismatches
-- streaming latency handling
-- dashboard validation
-- monitoring DAG parsing
-- operational freshness monitoring
+* Spark Kafka connector compatibility
+* Airflow Docker environment propagation
+* warehouse connectivity debugging
+* schema mismatches
+* streaming latency handling
+* monitoring DAG parsing
+* dashboard validation
 
-Detailed debugging documentation is available in:
+Detailed debugging notes are available in:
 
 ```text
 docs/debugging_notes/
@@ -377,30 +306,21 @@ docs/debugging_notes/
 
 # Future Improvements
 
-Potential future upgrades include:
+Potential future enhancements include:
 
-- automated alerting
-- anomaly detection
-- dbt integration
-- CI/CD deployment
-- cloud infrastructure deployment
-- real-time dashboard refreshes
-- additional sentiment sources
-- advanced NLP models
+* automated alerting
+* anomaly detection
+* dbt integration
+* CI/CD deployment
+* cloud infrastructure deployment
+* lower-latency dashboard refreshes
+* additional sentiment sources
+* advanced NLP models
 
 ---
 
 # Summary
 
-This project demonstrates the design and implementation of a production-style real-time analytics platform using modern data engineering tools.
+This project demonstrates an end-to-end data engineering platform integrating real-time streaming, sentiment analytics, warehousing, orchestration, monitoring and dashboard reporting.
 
-The platform combines:
-
-- streaming ingestion
-- real-time processing
-- warehousing
-- orchestration
-- monitoring
-- BI analytics
-
-to deliver an end-to-end data engineering workflow from ingestion to dashboard consumption.
+The platform combines Kafka, Spark, PostgreSQL, Airflow, Neon and Looker Studio to transform raw market and social data into analytical insights and business-facing visualisations.
